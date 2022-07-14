@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import ajax from '../services/fetchService';
 
 
 const AssignmentView = () => {
+
     const assigmentId = window.location.href.split("/assignments/")[1];
-    const [assignment, setAssignment] = useState(null); 
+    const [assignment, setAssignment] = useState({
+        gitHubUrl:"",
+        branch:""
+    }); 
 
     function updateAssignment(prop, value) {
         const newAssignment = {...assignment};
@@ -12,29 +17,26 @@ const AssignmentView = () => {
     }
 
     function save() {
-        fetch(`/api/assignments/${assigmentId}`, {
-            headers: {
-                "content-type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem('jwt')}`
-            },
-            method:"PUT",
-            body: JSON.stringify(assignment) 
-        }).then((response) => {if (response.status === 200) return response.json();
-        }).then((assignmentData) => {
+        ajax(           `/api/assignments/${assigmentId}`, 
+                        "PUT", 
+                        localStorage.getItem('jwt'), 
+                        assignment).then(
+            
+            (assignmentData) => {
             setAssignment(assignmentData);
-        });
+            }
+        );
     }
     useEffect(() => {
-        fetch(`/api/assignments/${assigmentId}`, {
-            headers: {
-                "content-type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem('jwt')}`
-            },
-            method: "GET",
-        }).then(response => {
-            if (response.status === 200) return response.json();
-        }).then(assignmentData => {
-            setAssignment(assignmentData);
+
+        ajax(   `/api/assignments/${assigmentId}`, 
+                "GET", 
+                localStorage.getItem('jwt')).then(
+                    
+            assignmentData => {
+                if(assignmentData.gitHubUrl === null)   assignmentData.gitHubUrl = "";
+                if(assignmentData.branch === null)   assignmentData.branch = "";
+                setAssignment(assignmentData);
         });
     }, [])
 

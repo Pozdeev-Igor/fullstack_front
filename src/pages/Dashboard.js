@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ajax from '../services/fetchService';
 import { useLocalState } from '../util/useLocalState';
 
 const Dashboard = () => {
@@ -7,32 +8,25 @@ const Dashboard = () => {
     const [assignments, setAssignments] = useState(null);
 
     useEffect(() => {
-        fetch("api/assignments", {
-            headers:{
-                "Content-type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem('jwt')}`
-            },
-            method: "GET"
-        }).then((response) => {
-                if (response.status === 200)    return response.json();
-
-        }).then(assignmentsData => {
-            setAssignments(assignmentsData);
-        })
+        ajax(   "api/assignments", 
+                "GET", 
+                localStorage.getItem('jwt')).then(
+                    
+                    assignmentsData => {
+                    setAssignments(assignmentsData);
+                    }
+                )
     }, []);
 
     function createAssignment(){
-        fetch("/api/assignments", {
-            headers: {
-                "content-type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem('jwt')}`
-            },
-            method: "POST",
-        }).then(response => {
-            if (response.status === 200) return response.json();
-        }).then(assignment => {
-            window.location.href = `assignments/${assignment.id}`;
-        });
+        ajax(   "/api/assignments", 
+                "POST", 
+                localStorage.getItem('jwt')).then(
+                    
+                    assignment => {
+                    window.location.href = `assignments/${assignment.id}`;
+                    }
+                );
     }
 
     return (
