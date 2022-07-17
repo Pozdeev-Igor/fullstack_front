@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../UserProvider/UserProvider";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import backgroundImg from "../img/clouds_sky_porous_133455_1920x1080.jpg"
 
 
 const Login = () => {
@@ -72,46 +73,53 @@ const Login = () => {
 
   }
   return (
-    <Container >
+    <div style={{ position:"fixed", 
+                  top:"0", 
+                  left:"0",
+                  width:"100%",
+                  height:"100%",
+                   backgroundImage: `url(${backgroundImg})`, }}>
 
 
-      <Form>
-        <Row>
-          <Col md="8" lg="6">
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label className="fs-4">Username</Form.Label>
-              <Form.Control size="lg" type="text" placeholder="Enter your username" onChange={usernameHandler} />
-            </Form.Group>
-          </Col>
-        </Row>
+      <Container style={{ marginTop: "50px" }}>
+        <Form>
+          <Row className="justify-content-center">
+            <Col md="8" lg="6">
+              <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Label className="fs-4">Username</Form.Label>
+                <Form.Control size="lg" type="text" placeholder="Enter your username" onChange={usernameHandler} />
+              </Form.Group>
+            </Col>
+          </Row>
 
-        <Row>
-          <Col md="8" lg="6">
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label className="fs-4">Password</Form.Label>
-              <Form.Control size="lg" type="password" placeholder="Enter your password" onChange={passwordHandler} />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicCheckbox">
-            </Form.Group>
-          </Col>
-        </Row>
-        <Row>
-          <Col md= "8" lg= "6" className="mt-2 d-flex flex-column gap-3 flex-md-row justify-content-md-between">
-            <Button size="lg" variant="primary" type="button" onClick={sendLoginRequest}>
-              Log in
-            </Button>
-            <Button size="lg" variant="secondary" type="button" onClick={() => {
-              window.location.href = "/";
-            }}
-            >
-              Exit
-            </Button>
-          </Col>
-        </Row>
+          <Row className="justify-content-center">
+            <Col md="8" lg="6">
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label className="fs-4">Password</Form.Label>
+                <Form.Control size="lg" type="password" placeholder="Enter your password" onChange={passwordHandler} />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formBasicCheckbox">
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row className="justify-content-center">
+            <Col md="8" lg="6" className="mt-2 d-flex flex-column gap-3 flex-md-row justify-content-md-between">
+              <Button size="lg" variant="primary" type="button" onClick={sendLoginRequest}>
+                Log in
+              </Button>
+              <Button size="lg" variant="secondary" type="button" onClick={() => {
+                window.location.href = "/";
+              }}
+              >
+                Exit
+              </Button>
+            </Col>
+          </Row>
 
-      </Form>
+        </Form>
 
-    </Container>
+      </Container>
+    </div>
   );
 };
 
