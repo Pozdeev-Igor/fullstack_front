@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../UserProvider/UserProvider";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
 
 const Login = () => {
@@ -10,7 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
 
-  
+
   function usernameHandler(e) {
     e.preventDefault();
     //console.log(e.target.value);
@@ -21,7 +22,7 @@ const Login = () => {
     //console.log(e.target.value);
     setPassword(e.target.value);
   }
-  
+
   // useEffect(() => {
   //   if (user.jwt) navigate("/dashboard");
   // }, [user]);
@@ -62,62 +63,56 @@ const Login = () => {
       //   }
       // })
       .then((response) => Promise.all([response.json(), response.headers])
-          .then(([body, headers]) => {
-            const authValue = headers.get("authorization");
-            //console.log(authValue);
-            localStorage.setItem('jwt', authValue);
-            navigate("/dashboard");
-          }));
+        .then(([body, headers]) => {
+          const authValue = headers.get("authorization");
+          //console.log(authValue);
+          localStorage.setItem('jwt', authValue);
+          navigate("/dashboard");
+        }));
 
   }
   return (
-    <form className="login-form" >
-        <div className="form-outline mb-4">
-            <input type="text" id="form2Example1" className="form-control"  onChange={usernameHandler}/>
-            <label className="form-label" htmlFor="form2Example1" >Username</label>
-        </div>
+    <Container >
 
-        <div className="form-outline mb-4">
-            <input type="password" id="form2Example2" className="form-control" onChange={passwordHandler}/>
-            <label className="form-label" htmlFor="form2Example2">Password</label>
-        </div>
 
-        <div className="row mb-4">
-            <div className="col d-flex justify-content-center">
-                <div className="form-check">
-                    <input className="form-check-input" type="checkbox" value="" id="form2Example31" />
-                    <label className="form-check-label" htmlFor="form2Example31"> Remember me </label>
-                </div>
-            </div>
+      <Form>
+        <Row>
+          <Col md="8" lg="6">
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label className="fs-4">Username</Form.Label>
+              <Form.Control size="lg" type="text" placeholder="Enter your username" onChange={usernameHandler} />
+            </Form.Group>
+          </Col>
+        </Row>
 
-            <div className="col">
-                <a href="src/pages/login/LoginPage#!">Forgot password?</a>
-            </div>
-        </div>
+        <Row>
+          <Col md="8" lg="6">
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label className="fs-4">Password</Form.Label>
+              <Form.Control size="lg" type="password" placeholder="Enter your password" onChange={passwordHandler} />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formBasicCheckbox">
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col md= "8" lg= "6" className="mt-2 d-flex flex-column gap-3 flex-md-row justify-content-md-between">
+            <Button size="lg" variant="primary" type="button" onClick={sendLoginRequest}>
+              Log in
+            </Button>
+            <Button size="lg" variant="secondary" type="button" onClick={() => {
+              window.location.href = "/";
+            }}
+            >
+              Exit
+            </Button>
+          </Col>
+        </Row>
 
-        <button type="submit" className="btn btn-primary btn-block mb-4" onClick={sendLoginRequest}>Sign in</button>
+      </Form>
 
-        <div className="text-center">
-            <p>Not a member? <a href="/registration">Register</a></p>
-            <p>or sign up with:</p>
-            <button type="button" className="btn btn-link btn-floating mx-1">
-                <i className="fab fa-facebook-f"></i>
-            </button>
-
-            <button type="button" className="btn btn-link btn-floating mx-1">
-                <i className="fab fa-google"></i>
-            </button>
-
-            <button type="button" className="btn btn-link btn-floating mx-1">
-                <i className="fab fa-twitter"></i>
-            </button>
-
-            <button type="button" className="btn btn-link btn-floating mx-1">
-                <i className="fab fa-github"></i>
-            </button>
-        </div>
-    </form>
-);
+    </Container>
+  );
 };
 
 export default Login;
