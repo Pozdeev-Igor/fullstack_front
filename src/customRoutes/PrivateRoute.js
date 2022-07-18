@@ -11,7 +11,7 @@ const PrivateRoute = ({ children }) => {
 
     if (jwToken) {
 
-        ajax(`api/auth/validate?token=${jwToken}`, "get", localStorage.getItem('jwt')).then((isValid) => {
+        ajax(`/api/auth/validate?token=${jwToken}`, "get", localStorage.getItem('jwt')).then((isValid) => {
             setIsValid(isValid);
             setIsLoading(false);
             return isValid === true ? children : <Navigate to="/login" />
