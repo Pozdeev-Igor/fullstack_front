@@ -1,5 +1,5 @@
 
-async function ajax(url, requestMethod, jwt, requestBody) {
+function ajax(url, requestMethod, jwt, requestBody) {
     //const myJwt = jwt;    //может не сработать
 
     const fetchData = {
@@ -17,9 +17,10 @@ async function ajax(url, requestMethod, jwt, requestBody) {
         fetchData.body = JSON.stringify(requestBody);
     }
     
-    const response = await fetch(url, fetchData);
-    if (response.status === 200)
-        return response.json();
+    return fetch(url, fetchData).then((response) => {
+        
+        if (response.status === 200) return response.json();
+    })
 }
 
 export default ajax;
