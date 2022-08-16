@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ajax from '../services/fetchService';
-import {Badge, Col, Container, Form, Row} from "react-bootstrap";
+import {Badge, ButtonGroup, Col, Container, DropdownButton, Form, Row, Dropdown} from "react-bootstrap";
 
 
 const AssignmentView = () => {
@@ -55,6 +55,27 @@ const AssignmentView = () => {
             </Row>
             {assignment ? 
                 <>
+                    <Form.Group as={Row} className="my-4" controlId="formPlaintextEmail">
+                        <Form.Label column sm="3" md="2">
+                            Assignment number:
+                        </Form.Label>
+                        <Col sm="9" md="8" lg="6">
+                            <DropdownButton
+                                as={ButtonGroup}
+                                id="assignmentName"
+                                variant={'info'}
+                                title="assignment 1"
+                            >
+                                {['1', '2', '3', '4', '5', '6'].map(
+                                    assignmentNum =>
+                                    <Dropdown.Item eventKey={assignmentNum}>
+                                        {assignmentNum}
+                                    </Dropdown.Item>)}
+
+                            </DropdownButton>
+                        </Col>
+                    </Form.Group>
+
                     <Form.Group as={Row} className="my-4" controlId="formPlaintextEmail">
                         <Form.Label column sm="3" md="2">
                             GitHub URL
