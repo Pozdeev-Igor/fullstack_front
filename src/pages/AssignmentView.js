@@ -9,7 +9,9 @@ const AssignmentView = () => {
     const [assignment, setAssignment] = useState({
         gitHubUrl:"",
         branch:""
-    }); 
+    });
+
+    const [assignmentEnums, setAssignmentEnums] = useState([]);
 
     function updateAssignment(prop, value) {
         const newAssignment = {...assignment};
@@ -34,10 +36,12 @@ const AssignmentView = () => {
                 "GET", 
                 localStorage.getItem('jwt')).then(
                     
-            assignmentData => {
+            (assignmentResponse) => {
+                let assignmentData = assignmentResponse.assignment;
                 if(assignmentData.gitHubUrl === null)   assignmentData.gitHubUrl = "";
                 if(assignmentData.branch === null)   assignmentData.branch = "";
                 setAssignment(assignmentData);
+                setAssignmentEnums(assignmentResponse.assignmentEnums);
         });
     }, [])
 
@@ -66,10 +70,9 @@ const AssignmentView = () => {
                                 variant={'info'}
                                 title="assignment 1"
                             >
-                                {['1', '2', '3', '4', '5', '6'].map(
-                                    assignmentNum =>
-                                    <Dropdown.Item eventKey={assignmentNum}>
-                                        {assignmentNum}
+                                {assignmentEnums.map((assignmentEnum) =>
+                                    <Dropdown.Item eventKey={assignmentEnum.assignmentEnum}>
+                                        {assignmentEnum.assignmentNum}
                                     </Dropdown.Item>)}
 
                             </DropdownButton>
