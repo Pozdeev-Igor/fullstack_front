@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import ajax from '../services/fetchService';
 import {Badge, ButtonGroup, Col, Container, DropdownButton, Form, Row, Dropdown} from "react-bootstrap";
 
@@ -15,27 +15,40 @@ const AssignmentView = () => {
     const [assignmentEnums, setAssignmentEnums] = useState([]);
     const [assignmentStatuses, setAssignmentStatuses] = useState([]);
 
-    async function updateAssignment(prop, value) {
+    const previousAssignmentValue = useRef(assignment);
+
+    function updateAssignment(prop, value) {
         const newAssignment = {...assignment};
         newAssignment[prop] = value;
-        await setAssignment(newAssignment);
+        setAssignment(newAssignment);
     }
 
-    function save() {
-        //this implies that the student is submitting the assignment for the first time
-        if (assignment.status === assignmentStatuses[0].status) {
-            updateAssignment("status", assignmentStatuses[1].status);
-        }
-        ajax(           `/api/assignments/${assigmentId}`, 
-                        "PUT", 
-                        localStorage.getItem('jwt'), 
-                        assignment).then(
-            
+    function persist() {
+        ajax(`/api/assignments/${assigmentId}`, "PUT",
+            localStorage.getItem('jwt'),
+            assignment).then(
             (assignmentData) => {
-            setAssignment(assignmentData);
+                setAssignment(assignmentData);
             }
         );
     }
+
+    function save() {
+        // this implies that the student is submitting the assignment for the first time
+        if (assignment.status === assignmentStatuses[0].status) {
+            updateAssignment("status", assignmentStatuses[1].status);
+        } else {
+            persist();
+        }
+    }
+
+    useEffect(() => {
+        if (previousAssignmentValue.current.status !== assignment.status) {
+            persist();
+        }
+        previousAssignmentValue.current = assignment;
+    }, [assignment])
+
     useEffect(() => {
 
         ajax(   `/api/assignments/${assigmentId}`, 
