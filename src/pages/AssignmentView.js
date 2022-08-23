@@ -1,14 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ajax from '../services/fetchService';
-import {Badge, ButtonGroup, Col, Container, DropdownButton, Form, Row, Dropdown} from "react-bootstrap";
+import {Badge, ButtonGroup, Col, Container, DropdownButton, Form, Row, Dropdown, Button} from "react-bootstrap";
 
 
 const AssignmentView = () => {
 
     const assigmentId = window.location.href.split("/assignments/")[1];
     const [assignment, setAssignment] = useState({
-        gitHubUrl:"",
-        branch:"",
+        gitHubUrl: "",
+        branch: "",
         number: null,
         status: null
     });
@@ -51,18 +51,17 @@ const AssignmentView = () => {
 
     useEffect(() => {
 
-        ajax(   `/api/assignments/${assigmentId}`, 
-                "GET", 
-                localStorage.getItem('jwt')).then(
-                    
+        ajax(`/api/assignments/${assigmentId}`,
+            "GET",
+            localStorage.getItem('jwt')).then(
             (assignmentResponse) => {
                 let assignmentData = assignmentResponse.assignment;
-                if(assignmentData.gitHubUrl === null)   assignmentData.gitHubUrl = "";
-                if(assignmentData.branch === null)   assignmentData.branch = "";
+                if (assignmentData.gitHubUrl === null) assignmentData.gitHubUrl = "";
+                if (assignmentData.branch === null) assignmentData.branch = "";
                 setAssignment(assignmentData);
                 setAssignmentEnums(assignmentResponse.assignmentEnums);
                 setAssignmentStatuses(assignmentResponse.statusEnum);
-        });
+            });
     }, [])
 
     return (
@@ -77,7 +76,7 @@ const AssignmentView = () => {
                     </Badge>
                 </Col>
             </Row>
-            {assignment ? 
+            {assignment ?
                 <>
                     <Form.Group as={Row} className="my-4" controlId="assignmentName">
                         <Form.Label column sm="3" md="2">
@@ -111,9 +110,9 @@ const AssignmentView = () => {
                         </Form.Label>
                         <Col sm="9" md="8" lg="6">
                             <Form.Control
-                                          onChange={(e) => updateAssignment("gitHubUrl", e.target.value)}
-                                          value={assignment.gitHubUrl}
-                                          type="url" placeholder="https://github.com/username/repo-name" />
+                                onChange={(e) => updateAssignment("gitHubUrl", e.target.value)}
+                                value={assignment.gitHubUrl}
+                                type="url" placeholder="https://github.com/username/repo-name"/>
                         </Col>
                     </Form.Group>
 
@@ -123,22 +122,25 @@ const AssignmentView = () => {
                         </Form.Label>
                         <Col sm="9" md="8" lg="6">
                             <Form.Control
-                                          onChange={(e) => updateAssignment("branch", e.target.value)}
-                                          value={assignment.branch}
-                                          type="text" placeholder="branch-name" />
+                                onChange={(e) => updateAssignment("branch", e.target.value)}
+                                value={assignment.branch}
+                                type="text" placeholder="branch-name"/>
                         </Col>
                     </Form.Group>
 
-                    <button
-                        type="button" 
-                        className="btn btn-secondary"
-                        onClick={() => save()}>Submit assignment
-                    </button>
-                
-                </> : 
-                    <>
-                    
-                    </> }
+                    <div className="d-flex gap-3">
+                        <Button size="lg" onClick={() => save()}>
+                            Submit assignment
+                        </Button>
+                        <Button size="lg" variant="secondary" onClick={() => (window.location.href = "/dashboard")}>
+                            Go Back
+                        </Button>
+                    </div>
+
+                </> :
+                <>
+
+                </>}
         </Container>
     );
 };

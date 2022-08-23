@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Button } from 'react-bootstrap';
+import {Card, Button, Badge} from 'react-bootstrap';
 import ajax from '../services/fetchService';
 
 const Dashboard = () => {
@@ -47,10 +47,12 @@ const Dashboard = () => {
                   style={{ width: "18rem", height: "18rem" }}
                 >
                   <Card.Body className="d-flex flex-column justify-content-around">
-                    <Card.Title>Assignment #{assignment.id}</Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">
-                      {assignment.status}
-                    </Card.Subtitle>
+                    <Card.Title>Assignment #{assignment.number}</Card.Title>
+                      <div className="d-flex align-items-start">
+                            <Badge pill bg="info">
+                          {assignment.status}
+                            </Badge>
+                      </div>
                     <Card.Text style={{ marginTop: "1em" }}>
                       <p>
                         <b>GitHub URL</b>: {assignment.gitHubUrl}
