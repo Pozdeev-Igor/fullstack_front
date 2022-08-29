@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Card, Button, Badge} from 'react-bootstrap';
+import {Card, Button, Badge, Col, Row} from 'react-bootstrap';
 import ajax from '../services/fetchService';
 
 const Dashboard = () => {
@@ -30,6 +30,20 @@ const Dashboard = () => {
 
     return (
         <div style={{ margin: "2em" }}>
+            <Row>
+                <Col>
+                    <div
+                        className="d-flex justify-content-end"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                            localStorage.clear();
+                            window.location.href = "/login";
+                        }}
+                    >
+                        Logout
+                    </div>
+                </Col>
+            </Row>
           <div className="mb-5">
             <Button size="lg" onClick={() => createAssignment()}>
               Submit New Assignment

@@ -68,7 +68,8 @@ const Login = () => {
           const authValue = headers.get("authorization");
           //console.log(authValue);
           localStorage.setItem('jwt', authValue);
-          navigate("/dashboard");
+          window.location.href="/dashboard";
+          // navigate("/dashboard");
         }));
 
   }
