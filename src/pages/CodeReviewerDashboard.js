@@ -1,10 +1,34 @@
 import React, {useEffect, useState} from 'react';
 import ajax from "../services/fetchService";
 import {Badge, Button, Card, Col, Container, Row} from "react-bootstrap";
+import jwt_decode from "jwt-decode";
 
 const CodeReviewerDashboard = () => {
     const [assignments, setAssignments] = useState(null);
 
+    function claimAssignment(assignment) {
+        const decodedJwt = jwt_decode(localStorage.getItem("jwt"));
+
+        const user = {
+            // id: null,
+            username: decodedJwt.sub,
+            authorities: decodedJwt.authorities,
+        }
+            assignment.codeReviewer = user;
+        //TODO: don't hardcode this status
+            assignment.status = "In review";
+        ajax(       `/api/assignments/${assignment.id}`,
+            "PUT",
+                        localStorage.getItem("jwt"),
+                        assignment)
+            .then(updatedAssignment => {
+            //TODO: update the view for the assignment that changed
+                const assignmentsCopy = [...assignments];
+                const i = assignmentsCopy.findIndex(a => a.id === assignment.id);
+                assignmentsCopy[i] = updatedAssignment;
+                setAssignments(assignmentsCopy);
+        })
+    }
     useEffect(() => {
         ajax("api/assignments", "GET", localStorage.getItem("jwt")).then((assignmentsData) => {
             setAssignments(assignmentsData);
@@ -80,10 +104,10 @@ const CodeReviewerDashboard = () => {
                                     <Button
                                         variant="secondary"
                                         onClick={() => {
-                                            window.location.href = `/assignments/${assignment.id}`;
+                                            claimAssignment(assignment);
                                         }}
                                     >
-                                        Edit
+                                        Claim
                                     </Button>
                                 </Card.Body>
                             </Card>
