@@ -17,7 +17,6 @@ function App() {
     function getRolesFromJWT() {
         if (localStorage.getItem("jwt")) {
             const decodedJwt = jwt_decode(localStorage.getItem("jwt"));
-            console.log(decodedJwt);
             return decodedJwt.authorities;
         }
         return [];
@@ -30,7 +29,6 @@ function App() {
                   element={
                       roles.find((role) => role === "ROLE_CODE_REVIEWER") ? (
                           <PrivateRoute>
-
                               <CodeReviewerDashboard />
                           </PrivateRoute>
                       ) : (

@@ -69,7 +69,6 @@ const Login = () => {
           //console.log(authValue);
           localStorage.setItem('jwt', authValue);
           window.location.href="/dashboard";
-          // navigate("/dashboard");
         }));
 
   }
