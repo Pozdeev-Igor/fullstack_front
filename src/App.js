@@ -8,6 +8,7 @@ import AssignmentView from './pages/AssignmentView';
 import jwt_decode from "jwt-decode";
 import {useState} from "react";
 import CodeReviewerDashboard from "./pages/CodeReviewerDashboard";
+import CodeReviewerAssignmentView from "./pages/CodeReviewerAssignmentView";
 
 
 function App() {
@@ -36,13 +37,22 @@ function App() {
                               <Dashboard />
                           </PrivateRoute>
                       ) } />
-      
-      <Route  path='/' element={<HomePage/>}  />   
-      <Route path='/login' element={<LoginPage/>} />
-      <Route path='/assignments/:id' element={<PrivateRoute><AssignmentView/></PrivateRoute>}/>
+
+      <Route path='/assignments/:id' element={
+          roles.find((role) => role === "ROLE_CODE_REVIEWER") ? (
+              <PrivateRoute>
+                  <CodeReviewerAssignmentView />
+              </PrivateRoute>
+          ) : (
+                  <PrivateRoute>
+                      <AssignmentView />
+                  </PrivateRoute>
+              )
+      }
+      />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="/" element={<HomePage />} />
     </Routes>
-    
   );
 }
-
 export default App;

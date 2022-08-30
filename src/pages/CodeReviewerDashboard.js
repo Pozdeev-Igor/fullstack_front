@@ -6,6 +6,10 @@ import jwt_decode from "jwt-decode";
 const CodeReviewerDashboard = () => {
     const [assignments, setAssignments] = useState(null);
 
+    function editReview(assignment) {
+        window.location.href=`/assignments/${assignment.id}`;
+
+    }
     function claimAssignment(assignment) {
         const decodedJwt = jwt_decode(localStorage.getItem("jwt"));
 
@@ -34,6 +38,7 @@ const CodeReviewerDashboard = () => {
             setAssignments(assignmentsData);
         });
     }, [localStorage.getItem("jwt")]);
+
 
     return (
         <Container>
@@ -95,10 +100,10 @@ const CodeReviewerDashboard = () => {
                                     <Button
                                         variant="secondary"
                                         onClick={() => {
-                                            claimAssignment(assignment);
+                                            editReview(assignment);
                                         }}
                                     >
-                                        Claim
+                                        Edit
                                     </Button>
                                 </Card.Body>
                             </Card>
@@ -151,7 +156,7 @@ const CodeReviewerDashboard = () => {
                                             claimAssignment(assignment);
                                         }}
                                     >
-                                        Claim
+                                        View
                                     </Button>
                                 </Card.Body>
                             </Card>
@@ -201,10 +206,10 @@ const CodeReviewerDashboard = () => {
                                         <Button
                                             variant="secondary"
                                             onClick={() => {
-                                                claimAssignment(assignment);
+                                                window.location.href=`assignments/${assignment.id}`;
                                             }}
                                         >
-                                            Claim
+                                            View
                                         </Button>
                                     </Card.Body>
                                 </Card>

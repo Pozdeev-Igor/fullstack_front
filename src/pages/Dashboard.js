@@ -63,7 +63,7 @@ const Dashboard = () => {
                   <Card.Body className="d-flex flex-column justify-content-around">
                     <Card.Title>Assignment #{assignment.number}</Card.Title>
                       <div className="d-flex align-items-start">
-                            <Badge pill bg="info">
+                            <Badge pill bg={assignment.status === "Completed" ? "success" :"info"}>
                           {assignment.status}
                             </Badge>
                       </div>
