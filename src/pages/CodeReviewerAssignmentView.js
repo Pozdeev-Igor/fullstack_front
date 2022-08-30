@@ -1,9 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ajax from "../services/fetchService";
 import {Badge, Button, ButtonGroup, Col, Container, Dropdown, DropdownButton, Form, Row} from "react-bootstrap";
+import StatusBadge from "../StatusBadgeComponent";
+import {useNavigate} from "react-router-dom";
 
 const CodeReviewerAssignmentView = () => {
 
+    let navigate = useNavigate();
     const assigmentId = window.location.href.split("/assignments/")[1];
     const [assignment, setAssignment] = useState({
         gitHubUrl: "",
@@ -33,7 +36,6 @@ const CodeReviewerAssignmentView = () => {
     }
 
     function save(status) {
-        // this implies that the student is submitting the assignment for the first time
         if (status && assignment.status !== status) {
             updateAssignment("status", status);
         }
@@ -71,9 +73,7 @@ const CodeReviewerAssignmentView = () => {
                     {assignment.number ? <h1>Assignment {assignment.number}</h1> : <></>}
                 </Col>
                 <Col>
-                    <Badge pill bg="info">
-                        {assignment.status}
-                    </Badge>
+                    <StatusBadge text={assignment.status}/>
                 </Col>
             </Row>
             {assignment ?
@@ -140,7 +140,7 @@ const CodeReviewerAssignmentView = () => {
                         )
                         }
 
-                        <Button size="lg" variant="secondary" onClick={() => (window.location.href = "/dashboard")}>
+                        <Button size="lg" variant="secondary" onClick={() => (navigate("/dashboard"))}>
                             Go Back
                         </Button>
                     </div>

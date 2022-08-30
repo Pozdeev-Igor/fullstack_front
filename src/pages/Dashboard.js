@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {Card, Button, Badge, Col, Row} from 'react-bootstrap';
 import ajax from '../services/fetchService';
+import StatusBadge from "../StatusBadgeComponent";
+import {useNavigate} from "react-router-dom";
 
 const Dashboard = () => {
 
+    const navigate = useNavigate();
     const [assignments, setAssignments] = useState(null);
 
     useEffect(() => {
@@ -23,7 +26,7 @@ const Dashboard = () => {
             localStorage.getItem('jwt')).then(
 
                 assignment => {
-                    window.location.href = `assignments/${assignment.id}`;
+                   navigate(`/assignments/${assignment.id}`);
                 }
             );
     }
@@ -37,7 +40,7 @@ const Dashboard = () => {
                         style={{ cursor: "pointer" }}
                         onClick={() => {
                             localStorage.clear();
-                            window.location.href = "/login";
+                          navigate("/login");
                         }}
                     >
                         Logout
@@ -63,9 +66,7 @@ const Dashboard = () => {
                   <Card.Body className="d-flex flex-column justify-content-around">
                     <Card.Title>Assignment #{assignment.number}</Card.Title>
                       <div className="d-flex align-items-start">
-                            <Badge pill bg={assignment.status === "Completed" ? "success" :"info"}>
-                          {assignment.status}
-                            </Badge>
+                            <StatusBadge text={assignment.status}/>
                       </div>
                     <Card.Text style={{ marginTop: "1em" }}>
                       <p>
@@ -79,7 +80,7 @@ const Dashboard = () => {
                     <Button
                       variant="secondary"
                       onClick={() => {
-                        window.location.href = `/assignments/${assignment.id}`;
+                      navigate(`/assignments/${assignment.id}`);
                       }}
                     >
                       Edit

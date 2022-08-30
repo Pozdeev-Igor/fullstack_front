@@ -4,7 +4,7 @@ import { useLocalState } from '../util/useLocalState';
 import ajax from "../services/fetchService"
 
 const PrivateRoute = ({ children }) => {
-    const jwt = useLocalState();
+    // const jwt = useLocalState();
     const jwToken = localStorage.getItem('jwt');
     const [isLoading, setIsLoading] = useState(true);
     const [isValid, setIsValid] = useState(null);

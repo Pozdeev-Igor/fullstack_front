@@ -68,7 +68,7 @@ const Login = () => {
           const authValue = headers.get("authorization");
           //console.log(authValue);
           localStorage.setItem('jwt', authValue);
-          window.location.href="/dashboard";
+         window.location.href="/dashboard";
         }));
 
   }
@@ -108,7 +108,7 @@ const Login = () => {
                 Log in
               </Button>
               <Button size="lg" variant="secondary" type="button" onClick={() => {
-                window.location.href = "/";
+               navigate("/");
               }}
               >
                 Exit
