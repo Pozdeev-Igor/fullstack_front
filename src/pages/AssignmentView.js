@@ -4,10 +4,13 @@ import {Badge, ButtonGroup, Col, Container, DropdownButton, Form, Row, Dropdown,
 import StatusBadge from "../StatusBadgeComponent";
 import {useNavigate} from "react-router-dom";
 import {useLocalState} from "../util/useLocalState";
+import {useUser} from "../UserProvider/UserProvider";
+import loginPage from "./LoginPage";
 
 
 const AssignmentView = () => {
 
+    const user = useUser();
     const [jwt, setJwt] = useLocalState("", "jwt");
     let navigate = useNavigate();
     const assigmentId = window.location.href.split("/assignments/")[1];
@@ -19,7 +22,12 @@ const AssignmentView = () => {
     });
     const [assignmentEnums, setAssignmentEnums] = useState([]);
     const [assignmentStatuses, setAssignmentStatuses] = useState([]);
+    const [comment, setComment] = useState({
+        text: "",
+        assignment: assigmentId,
+        user: user.jwt,
 
+    });
     const previousAssignmentValue = useRef(assignment);
 
     function updateAssignment(prop, value) {
@@ -47,6 +55,18 @@ const AssignmentView = () => {
         } else {
             persist();
         }
+    }
+
+    function submitComment() {
+        ajax('/api/comments', "POST", user.jwt, comment).then(data => {
+            console.log(data);
+        })
+    }
+
+    function updateComment(value) {
+        const commentCopy = {...comment}
+        commentCopy.text = value;
+        setComment(commentCopy);
     }
 
     useEffect(() => {
@@ -171,6 +191,11 @@ const AssignmentView = () => {
                         </Button>
                     </div>)}
 
+                    <div className="mt-5">
+                        <textarea style={{width: "100%", borderRadius: "0.35em"}}
+                                  onChange={(e) => updateComment(e.target.value)}></textarea>
+                        <Button onClick={() => submitComment()}>Comment</Button>
+                    </div>
                 </> :
                 <>
 
