@@ -1,13 +1,12 @@
-import React, { createContext, useContext, useState } from "react";
-import Cookies from "js-cookie";
+import React, {createContext, useContext, useReducer} from "react";
+import {useLocalState} from "../util/useLocalState";
 
-const UserContext = createContext('def');
+const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
-  const [jwt, setJwt] = useState(Cookies.get("jwt"));
+  const [jwt, setJwt] = useLocalState("", "jwt");
 
   const value = { jwt, setJwt };
-  console.log(value);
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
@@ -16,7 +15,6 @@ function useUser() {
   if (context === undefined) {
     throw new Error("useUser must be used within a UserProvider");
   }
-
   return context;
 }
 

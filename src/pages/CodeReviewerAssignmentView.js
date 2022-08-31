@@ -3,9 +3,11 @@ import ajax from "../services/fetchService";
 import {Badge, Button, ButtonGroup, Col, Container, Dropdown, DropdownButton, Form, Row} from "react-bootstrap";
 import StatusBadge from "../StatusBadgeComponent";
 import {useNavigate} from "react-router-dom";
+import {useLocalState} from "../util/useLocalState";
 
 const CodeReviewerAssignmentView = () => {
 
+    const [jwt, setJwt] = useLocalState("", "jwt");
     let navigate = useNavigate();
     const assigmentId = window.location.href.split("/assignments/")[1];
     const [assignment, setAssignment] = useState({
@@ -26,8 +28,10 @@ const CodeReviewerAssignmentView = () => {
     }
 
     function persist() {
-        ajax(`/api/assignments/${assigmentId}`, "PUT",
-            localStorage.getItem('jwt'),
+        ajax(
+            `/api/assignments/${assigmentId}`,
+            "PUT",
+            jwt,
             assignment).then(
             (assignmentData) => {
                 setAssignment(assignmentData);
@@ -55,7 +59,7 @@ const CodeReviewerAssignmentView = () => {
 
         ajax(`/api/assignments/${assigmentId}`,
             "GET",
-            localStorage.getItem('jwt')).then(
+            jwt).then(
             (assignmentResponse) => {
                 let assignmentData = assignmentResponse.assignment;
                 if (assignmentData.gitHubUrl === null) assignmentData.gitHubUrl = "";

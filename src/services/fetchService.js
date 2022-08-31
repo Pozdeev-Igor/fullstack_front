@@ -1,16 +1,15 @@
 
 function ajax(url, requestMethod, jwt, requestBody) {
-    //const myJwt = jwt;    //может не сработать
 
     const fetchData = {
         headers: {
             "content-type": "application/json"
         },
-        method: requestMethod
-    } 
+        method: requestMethod,
+    };
 
     if(jwt) {
-        fetchData.headers.Authorization = `Bearer ${jwt}`  //может не сработать
+        fetchData.headers.Authorization = `Bearer ${jwt}`;  //может не сработать
     }
     
     if(requestBody) {
@@ -20,7 +19,7 @@ function ajax(url, requestMethod, jwt, requestBody) {
     return fetch(url, fetchData).then((response) => {
         
         if (response.status === 200) return response.json();
-    })
+    });
 }
 
 export default ajax;

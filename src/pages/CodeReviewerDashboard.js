@@ -4,10 +4,16 @@ import {Badge, Button, Card, Col, Container, Row} from "react-bootstrap";
 import jwt_decode from "jwt-decode";
 import StatusBadge from "../StatusBadgeComponent";
 import {useNavigate} from "react-router-dom";
+import {useUser} from "../UserProvider/UserProvider";
 
 const CodeReviewerDashboard = () => {
+    const user = useUser();
     const navigate = useNavigate();
     const [assignments, setAssignments] = useState(null);
+
+    useEffect(() => {
+        if (!user.jwt) navigate("/login");
+    });
 
     function editReview(assignment) {
         navigate(`/assignments/${assignment.id}`);
@@ -15,34 +21,32 @@ const CodeReviewerDashboard = () => {
     }
 
     function claimAssignment(assignment) {
-        const decodedJwt = jwt_decode(localStorage.getItem("jwt"));
+        const decodedJwt = jwt_decode(user.jwt);
 
         const user = {
-            // id: null,
             username: decodedJwt.sub,
-            authorities: decodedJwt.authorities,
-        }
+        };
         assignment.codeReviewer = user;
         //TODO: don't hardcode this status
         assignment.status = "In review";
         ajax(`/api/assignments/${assignment.id}`,
             "PUT",
-            localStorage.getItem("jwt"),
+            user.jwt,
             assignment)
             .then(updatedAssignment => {
                 //TODO: update the view for the assignment that changed
                 const assignmentsCopy = [...assignments];
-                const i = assignmentsCopy.findIndex(a => a.id === assignment.id);
+                const i = assignmentsCopy.findIndex((a) => a.id === assignment.id);
                 assignmentsCopy[i] = updatedAssignment;
                 setAssignments(assignmentsCopy);
-            })
+            });
     }
 
     useEffect(() => {
-        ajax("api/assignments", "GET", localStorage.getItem("jwt")).then((assignmentsData) => {
+        ajax("api/assignments", "GET", user.jwt).then((assignmentsData) => {
             setAssignments(assignmentsData);
         });
-    }, [localStorage.getItem("jwt")]);
+    }, [user.jwt]);
 
 
     return (
@@ -53,7 +57,7 @@ const CodeReviewerDashboard = () => {
                         className="d-flex justify-content-end"
                         style={{cursor: "pointer"}}
                         onClick={() => {
-                            localStorage.clear();
+                            user.setJwt(null);
                             navigate("/login");
                         }}
                     >
