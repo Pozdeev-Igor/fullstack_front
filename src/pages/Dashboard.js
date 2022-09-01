@@ -68,8 +68,12 @@ const Dashboard = () => {
                                     <StatusBadge text={assignment.status}/>
                                 </div>
                                 <Card.Text style={{marginTop: "1em"}}>
-                                        <b>GitHub URL</b>: {assignment.gitHubUrl}
-                                        <b>Branch</b>: {assignment.branch}
+                                        <p>
+                                            <b>GitHub URL</b>: {assignment.gitHubUrl}
+                                        </p>
+                                        <p>
+                                            <b>Branch</b>: {assignment.branch}
+                                        </p>
                                 </Card.Text>
 
                                 <Button
