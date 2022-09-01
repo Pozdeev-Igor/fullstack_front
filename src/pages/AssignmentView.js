@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import ajax from '../services/fetchService';
 import {Badge, ButtonGroup, Col, Container, DropdownButton, Form, Row, Dropdown, Button} from "react-bootstrap";
 import StatusBadge from "../StatusBadgeComponent";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useLocalState} from "../util/useLocalState";
 import {useUser} from "../UserProvider/UserProvider";
 import loginPage from "./LoginPage";
@@ -11,9 +11,9 @@ import loginPage from "./LoginPage";
 const AssignmentView = () => {
 
     const user = useUser();
-    const [jwt, setJwt] = useLocalState("", "jwt");
+    const { assignmentId } = useParams();
     let navigate = useNavigate();
-    const assigmentId = window.location.href.split("/assignments/")[1];
+    // const assigmentId = window.location.href.split("/assignments/")[1];
     const [assignment, setAssignment] = useState({
         gitHubUrl: "",
         branch: "",
@@ -24,7 +24,7 @@ const AssignmentView = () => {
     const [assignmentStatuses, setAssignmentStatuses] = useState([]);
     const [comment, setComment] = useState({
         text: "",
-        assignment: assigmentId,
+        assignmentId: assignmentId != null ? parseInt(assignmentId) : null,
         user: user.jwt,
 
     });
@@ -38,9 +38,9 @@ const AssignmentView = () => {
 
     function persist() {
         ajax(
-            `/api/assignments/${assigmentId}`,
+            `/api/assignments/${assignmentId}`,
             "PUT",
-            jwt,
+            user.jwt,
             assignment).then(
             (assignmentData) => {
                 setAssignment(assignmentData);
@@ -58,8 +58,8 @@ const AssignmentView = () => {
     }
 
     function submitComment() {
-        ajax('/api/comments', "POST", user.jwt, comment).then(data => {
-            console.log(data);
+        ajax('/api/comments', "POST", user.jwt, comment).then(comment => {
+            console.log(comment);
         })
     }
 
@@ -78,8 +78,8 @@ const AssignmentView = () => {
 
     useEffect(() => {
 
-        ajax(`/api/assignments/${assigmentId}`,
-            "GET", jwt).then(
+        ajax(`/api/assignments/${assignmentId}`,
+            "GET", user.jwt).then(
             (assignmentResponse) => {
                 let assignmentData = assignmentResponse.assignment;
                 if (assignmentData.gitHubUrl === null) assignmentData.gitHubUrl = "";

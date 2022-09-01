@@ -1,7 +1,7 @@
 import React, {createContext, useContext, useReducer} from "react";
 import {useLocalState} from "../util/useLocalState";
 
-const UserContext = createContext();
+const UserContext = createContext("");
 
 const UserProvider = ({ children }) => {
   const [jwt, setJwt] = useLocalState("", "jwt");

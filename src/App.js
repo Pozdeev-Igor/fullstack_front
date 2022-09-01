@@ -44,7 +44,7 @@ function App() {
                             </PrivateRoute>
                         )}/>
 
-                <Route path='/assignments/:id'
+                <Route path='/assignments/:assignmentId'
                        element={
                     roles.find((role) => role === "ROLE_CODE_REVIEWER") ? (
                         <PrivateRoute>
