@@ -4,12 +4,19 @@ import {Button, ButtonGroup, Col, Container, Dropdown, DropdownButton, Form, Row
 import StatusBadge from "../StatusBadgeComponent";
 import {useNavigate, useParams} from "react-router-dom";
 import {useUser} from "../UserProvider/UserProvider";
+import Comment from "../Comment";
 
 
 const AssignmentView = () => {
 
+    const {assignmentId} = useParams();
     const user = useUser();
-    const { assignmentId } = useParams();
+    const emptyComment = {
+        id: null,
+        text: "",
+        assignmentId: assignmentId != null ? parseInt(assignmentId) : null,
+        user: user.jwt,
+    };
     let navigate = useNavigate();
     const [comments, setComments] = useState([]);
     const [assignment, setAssignment] = useState({
@@ -20,13 +27,25 @@ const AssignmentView = () => {
     });
     const [assignmentEnums, setAssignmentEnums] = useState([]);
     const [assignmentStatuses, setAssignmentStatuses] = useState([]);
-    const [comment, setComment] = useState({
-        text: "",
-        assignmentId: assignmentId != null ? parseInt(assignmentId) : null,
-        user: user.jwt,
-
-    });
+    const [comment, setComment] = useState(emptyComment);
     const previousAssignmentValue = useRef(assignment);
+
+    function handleEditComment(commentId) {
+        const i = comments.findIndex((comment) => comment.id === commentId);
+        console.log("I've been to to edit this comment", comments[i]);
+        const commentCopy = {
+            id: comments[i].id,
+            text: comments[i].text,
+            assignmentId: assignmentId != null ? parseInt(assignmentId) : null,
+            user: user.jwt,
+        };
+        setComment(commentCopy);
+    }
+
+    function handleDeleteComment(commentId) {
+        // TODO: send DELETE request to server
+        console.log("I've been to to delete this comment", comment);
+    }
 
     function updateAssignment(prop, value) {
         const newAssignment = {...assignment};
@@ -56,24 +75,37 @@ const AssignmentView = () => {
     }
 
     function submitComment() {
-        ajax("/api/comments", "post", user.jwt, comment).then((commentData) => {
-            const commentsCopy = [...comments];
-            commentsCopy.push(commentData);
+        if (comment.id) {
+            ajax(`/api/comments/${comment.id}`, "put", user.jwt, comment).then(
+                (d) => {
+                    const commentsCopy = [...comments];
+                    const i = commentsCopy.findIndex((comment) => comment.id === d.id);
+                    commentsCopy[i] = d;
+                    setComments(commentsCopy);
+                    setComment(emptyComment);
+                }
+            );
+        } else {
+            ajax("/api/comments", "post", user.jwt, comment).then((d) => {
+                const commentsCopy = [...comments];
+                commentsCopy.push(d);
 
-            setComments(commentsCopy);
-        });
+                setComments(commentsCopy);
+                setComment(emptyComment);
+            });
+        }
     }
 
     useEffect(() => {
-    ajax(
-        `/api/comments?assignmentId=${assignmentId}`,
-        "get",
-        user.jwt,
-        null
-    ).then((commentsData) => {
-        setComments(commentsData);
-    });
-}, []);
+        ajax(
+            `/api/comments?assignmentId=${assignmentId}`,
+            "get",
+            user.jwt,
+            null
+        ).then((commentsData) => {
+            setComments(commentsData);
+        });
+    }, []);
 
     function updateComment(value) {
         const commentCopy = {...comment}
@@ -205,17 +237,21 @@ const AssignmentView = () => {
 
                     <div className="mt-5">
                         <textarea style={{width: "100%", borderRadius: "0.35em"}}
-                                  onChange={(e) => updateComment(e.target.value)}></textarea>
+                                  onChange={(e) => updateComment(e.target.value)}
+                                  value={comment.text}
+                        ></textarea>
                         <Button onClick={() => submitComment()}>Comment</Button>
                     </div>
                     <div className="mt-5">
                         {comments.map((comment) => (
-                            <div key={comment.id}>
-                <span style={{ fontWeight: "bold" }} >
-                  {`[${comment.createdDate}] ${comment.createdBy.name}: `}
-                </span>
-                                {comment.text}
-                            </div>
+                            <Comment
+                                createdDate={comment.createdDate}
+                                createdBy={comment.createdBy}
+                                text={comment.text}
+                                emitDeleteComment={handleDeleteComment}
+                                emitEditComment={handleEditComment}
+                                id={comment.id}
+                            />
                         ))}
                     </div>
                 </> :

@@ -1,4 +1,3 @@
-
 function ajax(url, requestMethod, jwt, requestBody) {
 
     const fetchData = {
@@ -7,17 +6,13 @@ function ajax(url, requestMethod, jwt, requestBody) {
         },
         method: requestMethod,
     };
-
-    if(jwt) {
+    if (jwt) {
         fetchData.headers.Authorization = `Bearer ${jwt}`;  //может не сработать
     }
-    
-    if(requestBody) {
+    if (requestBody) {
         fetchData.body = JSON.stringify(requestBody);
     }
-    
     return fetch(url, fetchData).then((response) => {
-        
         if (response.status === 200) return response.json();
     });
 }
