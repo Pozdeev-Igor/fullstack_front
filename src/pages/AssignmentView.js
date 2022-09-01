@@ -1,11 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ajax from '../services/fetchService';
-import {Badge, ButtonGroup, Col, Container, DropdownButton, Form, Row, Dropdown, Button} from "react-bootstrap";
+import {Button, ButtonGroup, Col, Container, Dropdown, DropdownButton, Form, Row} from "react-bootstrap";
 import StatusBadge from "../StatusBadgeComponent";
 import {useNavigate, useParams} from "react-router-dom";
-import {useLocalState} from "../util/useLocalState";
 import {useUser} from "../UserProvider/UserProvider";
-import loginPage from "./LoginPage";
 
 
 const AssignmentView = () => {
@@ -13,7 +11,7 @@ const AssignmentView = () => {
     const user = useUser();
     const { assignmentId } = useParams();
     let navigate = useNavigate();
-    // const assigmentId = window.location.href.split("/assignments/")[1];
+    const [comments, setComments] = useState([]);
     const [assignment, setAssignment] = useState({
         gitHubUrl: "",
         branch: "",
@@ -58,10 +56,24 @@ const AssignmentView = () => {
     }
 
     function submitComment() {
-        ajax('/api/comments', "POST", user.jwt, comment).then(comment => {
-            console.log(comment);
-        })
+        ajax("/api/comments", "post", user.jwt, comment).then((commentData) => {
+            const commentsCopy = [...comments];
+            commentsCopy.push(commentData);
+
+            setComments(commentsCopy);
+        });
     }
+
+    useEffect(() => {
+    ajax(
+        `/api/comments?assignmentId=${assignmentId}`,
+        "get",
+        user.jwt,
+        null
+    ).then((commentsData) => {
+        setComments(commentsData);
+    });
+}, []);
 
     function updateComment(value) {
         const commentCopy = {...comment}
@@ -195,6 +207,16 @@ const AssignmentView = () => {
                         <textarea style={{width: "100%", borderRadius: "0.35em"}}
                                   onChange={(e) => updateComment(e.target.value)}></textarea>
                         <Button onClick={() => submitComment()}>Comment</Button>
+                    </div>
+                    <div className="mt-5">
+                        {comments.map((comment) => (
+                            <div key={comment.id}>
+                <span style={{ fontWeight: "bold" }} >
+                  {`[${comment.createdDate}] ${comment.createdBy.name}: `}
+                </span>
+                                {comment.text}
+                            </div>
+                        ))}
                     </div>
                 </> :
                 <>
