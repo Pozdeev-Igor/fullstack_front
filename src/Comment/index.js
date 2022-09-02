@@ -1,47 +1,67 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useUser} from "../UserProvider/UserProvider";
 import jwt_decode from "jwt-decode";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime.js";
+import { ArrowRight } from 'react-bootstrap-icons';
 
 const Comment = (props) => {
     const user = useUser();
     const decodedJwt = jwt_decode(user.jwt);
-    const {
-        id,
-        createdDate,
-        createdBy,
-        text,
-        emitDeleteComment,
-        emitEditComment
-    } = props;
+    const {id, createdDate, createdBy, text} = props.commentData;
+    const {emitEditComment, emitDeleteComment} = props;
+    const [commentRelativeTime, setCommentRelativeTime] = useState("");
 
-    console.log("decodedJWT", decodedJwt);
-    console.log("createdBy", createdBy);
+    useEffect(() => {
+        updateCommentRelativeTime();
+    }, [createdDate]);
+
+    function updateCommentRelativeTime() {
+        if (createdDate) {
+            dayjs.extend(relativeTime);
+            if (typeof createdDate === "string")
+                setCommentRelativeTime(dayjs(createdDate).fromNow());
+            else {
+                // console.log(createdDate);
+                // console.log(createdDate.fromNow());
+                setCommentRelativeTime(createdDate.fromNow());
+            }
+        }
+    }
 
     return (
-        <div className="comment-bubble">
-            <div className="d-flex gap-5">
-                <div style={{fontWeight: "bold"}}>{`${createdBy.name}`}</div>
-                {decodedJwt.sub === createdBy.username ? (
-                    <>
-                        <div
-                            onClick={() => emitEditComment(id)}
-                            style={{cursor: "pointer", color: "blue"}}
-                        >
-                            edit
-                        </div>
-                        <div
-                            onClick={() => emitDeleteComment(id)}
-                            style={{cursor: "pointer", color: "red"}}
-                        >
-                            delete
-                        </div>
-                    </>
-                ) : (
-                    <></>
-                )}
+        <>
+            <div className="comment-bubble">
+                <div className="d-flex gap-5" style={{fontWeight: "bold"}}>
+                    <div>{`${createdBy.name}`}</div>
+                    {decodedJwt.sub === createdBy.username ? (
+                        <>
+                            <div
+                                onClick={() => emitEditComment(id)}
+                                style={{cursor: "pointer", color: "blue"}}
+                            >
+                                <i className="bi bi-pencil-square"></i>
+                            </div>
+                            <div
+                                onClick={() => emitDeleteComment(id)}
+                                style={{cursor: "pointer", color: "red"}}
+                            >
+                                <i className="bi bi-trash3"></i>
+                            </div>
+                        </>
+                    ) : (
+                        <></>
+                    )}
+                </div>
+                <div>{text}</div>
             </div>
-            <div>{text}</div>
-        </div>
+
+            <div
+                style={{marginTop: "-1.25em", marginLeft: "1.4em", fontSize: "12px"}}
+            >
+                {commentRelativeTime ? `Posted ${commentRelativeTime}` : ""}
+            </div>
+        </>
     );
 };
 

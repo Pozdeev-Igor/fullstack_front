@@ -5,6 +5,7 @@ import StatusBadge from "../StatusBadgeComponent";
 import {useNavigate, useParams} from "react-router-dom";
 import {useLocalState} from "../util/useLocalState";
 import {useUser} from "../UserProvider/UserProvider";
+import CommentContainer from "../CommentContainer";
 
 const CodeReviewerAssignmentView = () => {
 
@@ -87,7 +88,7 @@ const CodeReviewerAssignmentView = () => {
                 <>
                     <Form.Group as={Row} className="my-4" controlId="gitHubUrl">
                         <Form.Label column sm="3" md="2">
-                            GitHub URL
+                            Github URL:
                         </Form.Label>
                         <Col sm="9" md="8" lg="6">
                             <Form.Control
@@ -151,7 +152,7 @@ const CodeReviewerAssignmentView = () => {
                             Go Back
                         </Button>
                     </div>
-
+                        <CommentContainer assignmentId={assignmentId}/>
                 </> :
                 <>
 

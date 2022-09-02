@@ -4,21 +4,16 @@ import {Button, ButtonGroup, Col, Container, Dropdown, DropdownButton, Form, Row
 import StatusBadge from "../StatusBadgeComponent";
 import {useNavigate, useParams} from "react-router-dom";
 import {useUser} from "../UserProvider/UserProvider";
-import Comment from "../Comment";
+import CommentContainer from "../CommentContainer";
 
 
 const AssignmentView = () => {
 
-    const {assignmentId} = useParams();
-    const user = useUser();
-    const emptyComment = {
-        id: null,
-        text: "",
-        assignmentId: assignmentId != null ? parseInt(assignmentId) : null,
-        user: user.jwt,
-    };
     let navigate = useNavigate();
-    const [comments, setComments] = useState([]);
+    const user = useUser();
+    const {assignmentId} = useParams();
+
+
     const [assignment, setAssignment] = useState({
         gitHubUrl: "",
         branch: "",
@@ -27,30 +22,24 @@ const AssignmentView = () => {
     });
     const [assignmentEnums, setAssignmentEnums] = useState([]);
     const [assignmentStatuses, setAssignmentStatuses] = useState([]);
-    const [comment, setComment] = useState(emptyComment);
+
     const previousAssignmentValue = useRef(assignment);
 
-    function handleEditComment(commentId) {
-        const i = comments.findIndex((comment) => comment.id === commentId);
-        console.log("I've been to to edit this comment", comments[i]);
-        const commentCopy = {
-            id: comments[i].id,
-            text: comments[i].text,
-            assignmentId: assignmentId != null ? parseInt(assignmentId) : null,
-            user: user.jwt,
-        };
-        setComment(commentCopy);
-    }
-
-    function handleDeleteComment(commentId) {
-        // TODO: send DELETE request to server
-        console.log("I've been to to delete this comment", comment);
-    }
 
     function updateAssignment(prop, value) {
         const newAssignment = {...assignment};
         newAssignment[prop] = value;
         setAssignment(newAssignment);
+    }
+
+
+    function save(status) {
+        // this implies that the student is submitting the assignment for the first time
+        if (status && assignment.status !== status) {
+            updateAssignment("status", status);
+        } else {
+            persist();
+        }
     }
 
     function persist() {
@@ -63,54 +52,6 @@ const AssignmentView = () => {
                 setAssignment(assignmentData);
             }
         );
-    }
-
-    function save(status) {
-        // this implies that the student is submitting the assignment for the first time
-        if (status && assignment.status !== status) {
-            updateAssignment("status", status);
-        } else {
-            persist();
-        }
-    }
-
-    function submitComment() {
-        if (comment.id) {
-            ajax(`/api/comments/${comment.id}`, "put", user.jwt, comment).then(
-                (d) => {
-                    const commentsCopy = [...comments];
-                    const i = commentsCopy.findIndex((comment) => comment.id === d.id);
-                    commentsCopy[i] = d;
-                    setComments(commentsCopy);
-                    setComment(emptyComment);
-                }
-            );
-        } else {
-            ajax("/api/comments", "post", user.jwt, comment).then((d) => {
-                const commentsCopy = [...comments];
-                commentsCopy.push(d);
-
-                setComments(commentsCopy);
-                setComment(emptyComment);
-            });
-        }
-    }
-
-    useEffect(() => {
-        ajax(
-            `/api/comments?assignmentId=${assignmentId}`,
-            "get",
-            user.jwt,
-            null
-        ).then((commentsData) => {
-            setComments(commentsData);
-        });
-    }, []);
-
-    function updateComment(value) {
-        const commentCopy = {...comment}
-        commentCopy.text = value;
-        setComment(commentCopy);
     }
 
     useEffect(() => {
@@ -174,7 +115,7 @@ const AssignmentView = () => {
 
                     <Form.Group as={Row} className="my-4" controlId="gitHubUrl">
                         <Form.Label column sm="3" md="2">
-                            GitHub URL
+                            Github URL:
                         </Form.Label>
                         <Col sm="9" md="8" lg="6">
                             <Form.Control
@@ -235,25 +176,7 @@ const AssignmentView = () => {
                         </Button>
                     </div>)}
 
-                    <div className="mt-5">
-                        <textarea style={{width: "100%", borderRadius: "0.35em"}}
-                                  onChange={(e) => updateComment(e.target.value)}
-                                  value={comment.text}
-                        ></textarea>
-                        <Button onClick={() => submitComment()}>Comment</Button>
-                    </div>
-                    <div className="mt-5">
-                        {comments.map((comment) => (
-                            <Comment
-                                createdDate={comment.createdDate}
-                                createdBy={comment.createdBy}
-                                text={comment.text}
-                                emitDeleteComment={handleDeleteComment}
-                                emitEditComment={handleEditComment}
-                                id={comment.id}
-                            />
-                        ))}
-                    </div>
+                    <CommentContainer assignmentId={assignmentId}/>
                 </> :
                 <>
 
