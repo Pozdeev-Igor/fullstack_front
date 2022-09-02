@@ -97,8 +97,8 @@ const AssignmentView = () => {
                                 variant={'info'}
                                 title={assignment.number ? `Assignment ${assignment.number}` : "Select an assignment"}
                                 onSelect={(selectedElement) => {
-
                                     updateAssignment("number", selectedElement);
+                                    // window.location.href=`/assignments/${selectedElement}`;
                                 }
                                 }
                             >
